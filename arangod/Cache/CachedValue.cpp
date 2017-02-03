@@ -21,46 +21,46 @@
 /// @author Daniel H. Larkin
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "CacheValue.h"
+#include "CachedValue.h"
 #include <stdint.h>
 #include <cstring>
 
-using namespace arangodb;
+using namespace arangodb::cache;
 
-uint8_t* CacheValue::key() {
+uint8_t* CachedValue::key() {
   uint8_t* buf = reinterpret_cast<uint8_t*>(this);
-  return (buf + sizeof(CacheValue));
+  return (buf + sizeof(CachedValue));
 }
 
-uint8_t* CacheValue::value() {
+uint8_t* CachedValue::value() {
   uint8_t* buf = reinterpret_cast<uint8_t*>(this);
-  return (buf + sizeof(CacheValue) + keySize);
+  return (buf + sizeof(CachedValue) + keySize);
 }
 
-uint64_t CacheValue::size() {
-  uint64_t size = sizeof(CacheValue);
+uint64_t CachedValue::size() {
+  uint64_t size = sizeof(CachedValue);
   size += keySize;
   size += valueSize;
   return size;
 }
 
-void CacheValue::lease() { refCount++; }
+void CachedValue::lease() { refCount++; }
 
-void CacheValue::release() { refCount--; }
+void CachedValue::release() { refCount--; }
 
-uint8_t* CacheValue::createCopy() {
-  return CacheValue::construct(keySize, key(), valueSize, value());
+uint8_t* CachedValue::createCopy() {
+  return CachedValue::construct(keySize, key(), valueSize, value());
 }
 
-uint8_t* CacheValue::construct(uint32_t kSize, uint8_t* k, uint64_t vSize,
-                               uint8_t* v) {
-  uint8_t* buf = new uint8_t[sizeof(CacheValue) + kSize + vSize];
-  CacheValue* cv = reinterpret_cast<CacheValue*>(buf);
+uint8_t* CachedValue::construct(uint32_t kSize, uint8_t* k, uint64_t vSize,
+                                uint8_t* v) {
+  uint8_t* buf = new uint8_t[sizeof(CachedValue) + kSize + vSize];
+  CachedValue* cv = reinterpret_cast<CachedValue*>(buf);
 
   cv->refCount = 0;
   cv->keySize = kSize;
   cv->valueSize = vSize;
-  cv += sizeof(CacheValue);
+  cv += sizeof(CachedValue);
   std::memcpy(cv, k, kSize);
   cv += kSize;
   std::memcpy(cv, v, vSize);

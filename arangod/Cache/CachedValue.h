@@ -21,8 +21,8 @@
 /// @author Daniel H. Larkin
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef ARANGODB_CACHE_CACHE_VALUE_H
-#define ARANGODB_CACHE_CACHE_VALUE_H
+#ifndef ARANGODB_CACHE_CACHED_VALUE_H
+#define ARANGODB_CACHE_CACHED_VALUE_H
 
 #include "Basics/Common.h"
 
@@ -30,8 +30,9 @@
 #include <atomic>
 
 namespace arangodb {
+namespace cache {
 
-struct CacheValue {
+struct CachedValue {
   // This is the beginning of a cache data entry, it will be allocated
   // using std::malloc with the right size for key and value, which
   // resides directly behind the following entries. The reference count
@@ -55,8 +56,9 @@ struct CacheValue {
                             uint8_t* v);
 };
 
-static_assert(sizeof(CacheValue) == 16);
+static_assert(sizeof(CachedValue) == 16);
 
+};  // end namespace cache
 };  // end namespace arangodb
 
 #endif

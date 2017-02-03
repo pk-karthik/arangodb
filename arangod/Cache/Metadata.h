@@ -21,18 +21,19 @@
 /// @author Daniel H. Larkin
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef ARANGODB_CACHE_CACHE_METADATA_H
-#define ARANGODB_CACHE_CACHE_METADATA_H
+#ifndef ARANGODB_CACHE_METADATA_H
+#define ARANGODB_CACHE_METADATA_H
 
 #include <atomic>
 #include <cstdint>
 #include "Basics/Common.h"
 
 namespace arangodb {
+namespace cache {
 
-class CacheMetadata {
+class Metadata {
  public:
-  CacheMetadata(uint64_t limit, uint8_t* table, uint32_t logSize);
+  Metadata(uint64_t limit, uint8_t* table, uint32_t logSize);
 
   // record must be locked for both reading and writing!
   void lock();
@@ -63,8 +64,8 @@ class CacheMetadata {
   std::atomic<uint32_t> _state;
 
   // state flags
-  static size_t FLAG_LOCK;
-  static size_t FLAG_MIGRATING;
+  static uint32_t FLAG_LOCK;
+  static uint32_t FLAG_MIGRATING;
 
   // vital information about memory usage
   uint64_t _usage;
@@ -78,6 +79,7 @@ class CacheMetadata {
   uint32_t _auxiliaryLogSize;
 };
 
-};  // end namspace arangodb
+};  // end namespace cache
+};  // end namespace arangodb
 
 #endif
