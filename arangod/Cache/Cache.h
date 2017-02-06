@@ -25,12 +25,18 @@
 #define ARANGODB_CACHE_CACHE_H
 
 #include "Basics/Common.h"
+#include "Cache/Metadata.h"
+
+#include <list>
 
 namespace arangodb {
 namespace cache {
 
+class Metadata;  // forward declaration
+
 class Cache {
  public:
+  virtual std::list<Metadata>::iterator& metadata() = 0;
   virtual void freeMemory() = 0;
   virtual void migrate() = 0;
 };

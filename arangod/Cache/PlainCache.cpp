@@ -89,6 +89,8 @@ bool PlainCache::remove(uint32_t keySize, uint8_t* key) {
   return false;
 }
 
+std::list<Metadata>::iterator& PlainCache::metadata() { return _metadata; }
+
 void PlainCache::freeMemory() {
   // TODO: implement this
 }

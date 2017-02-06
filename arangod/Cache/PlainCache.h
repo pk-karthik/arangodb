@@ -100,6 +100,7 @@ class PlainCache : public Cache {
   void insert(CachedValue* value);
   bool remove(uint32_t keySize, uint8_t* key);
 
+  std::list<Metadata>::iterator& metadata();
   void freeMemory();
   void migrate();
 

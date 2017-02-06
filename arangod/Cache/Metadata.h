@@ -33,6 +33,8 @@
 namespace arangodb {
 namespace cache {
 
+class Cache;  // forward declaration
+
 class Metadata {
  public:
   Metadata(Cache* cache, uint64_t limit, uint8_t* table, uint32_t logSize);
@@ -70,7 +72,7 @@ class Metadata {
   // state flags
   static uint32_t FLAG_LOCK;
   static uint32_t FLAG_MIGRATING;
-  static uint32_t FLAG_FREEING;
+  static uint32_t FLAG_RESIZING;
 
   // pointer to underlying cache
   Cache* _cache;

@@ -95,6 +95,10 @@ void TransactionalCache::blackList(uint32_t keySize, uint8_t* key) {
   // TODO: implement this
 }
 
+std::list<Metadata>::iterator& TransactionalCache::metadata() {
+  return _metadata;
+}
+
 void TransactionalCache::freeMemory() {
   // TODO: implement this
 }
