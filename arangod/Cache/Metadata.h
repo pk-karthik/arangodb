@@ -24,16 +24,18 @@
 #ifndef ARANGODB_CACHE_METADATA_H
 #define ARANGODB_CACHE_METADATA_H
 
+#include "Basics/Common.h"
+#include "Cache/Cache.h"
+
 #include <atomic>
 #include <cstdint>
-#include "Basics/Common.h"
 
 namespace arangodb {
 namespace cache {
 
 class Metadata {
  public:
-  Metadata(uint64_t limit, uint8_t* table, uint32_t logSize);
+  Metadata(Cache* cache, uint64_t limit, uint8_t* table, uint32_t logSize);
 
   // record must be locked for both reading and writing!
   void lock();
@@ -66,6 +68,9 @@ class Metadata {
   // state flags
   static uint32_t FLAG_LOCK;
   static uint32_t FLAG_MIGRATING;
+
+  // pointer to underlying cache
+  Cache* _cache;
 
   // vital information about memory usage
   uint64_t _usage;

@@ -21,17 +21,21 @@
 /// @author Daniel H. Larkin
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "Metadata.h"
+#include "Cache/Metadata.h"
+#include "Cache/Cache.h"
+
 #include <atomic>
 #include <cstdint>
 
 using namespace arangodb::cache;
 
-size_t Metadata::FLAG_LOCK = 0x01;
-size_t Metadata::FLAG_MIGRATING = 0x02;
+uint32_t Metadata::FLAG_LOCK = 0x01;
+uint32_t Metadata::FLAG_MIGRATING = 0x02;
 
-Metadata::Metadata(uint64_t limit, uint8_t* table, uint32_t logSize)
+Metadata::Metadata(Cache* cache, uint64_t limit, uint8_t* table,
+                   uint32_t logSize)
     : _state(0),
+      _cache(cache),
       _usage(0),
       _softLimit(limit),
       _hardLimit(limit),

@@ -21,7 +21,8 @@
 /// @author Daniel H. Larkin
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "CachedValue.h"
+#include "Cache/CachedValue.h"
+
 #include <stdint.h>
 #include <cstring>
 
