@@ -83,21 +83,8 @@ class PlainCache : public Cache {
                                  // first parameter can be removed
   ~PlainCache();
 
-  class Finding {
-   private:
-    CachedValue* _value;
-
-   public:
-    Finding(CachedValue* v);
-    ~Finding();
-
-    bool found();
-    CachedValue* value();
-    CachedValue* copy();
-  };
-
   Finding lookup(uint32_t keySize, uint8_t* key);
-  void insert(CachedValue* value);
+  bool insert(CachedValue* value);
   bool remove(uint32_t keySize, uint8_t* key);
 
   std::list<Metadata>::iterator& metadata();

@@ -21,9 +21,7 @@
 /// @author Daniel H. Larkin
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef ARANGODB_CACHE_CACHE_H
-#define ARANGODB_CACHE_CACHE_H
-
+#include "Cache/Cache.h"
 #include "Basics/Common.h"
 #include "Cache/CachedValue.h"
 #include "Cache/Metadata.h"
@@ -31,36 +29,24 @@
 #include <stdint.h>
 #include <list>
 
-namespace arangodb {
-namespace cache {
+using namespace arangodb::cache;
 
-class Metadata;  // forward declaration
+Cache::Finding::Finding(CachedValue* v) : _value(v) {
+  if (_value != nullptr) {
+    _value->lease();
+  }
+}
 
-class Cache {
- public:
-  class Finding {
-   private:
-    CachedValue* _value;
+Cache::Finding::~Finding() {
+  if (_value != nullptr) {
+    _value->release();
+  }
+}
 
-   public:
-    Finding(CachedValue* v);
-    ~Finding();
+bool Cache::Finding::found() { return (_value != nullptr); }
 
-    bool found();
-    CachedValue* value();
-    CachedValue* copy();
-  };
+CachedValue* Cache::Finding::value() { return _value; }
 
-  virtual Finding lookup(uint32_t keySize, uint8_t* key) = 0;
-  virtual bool insert(CachedValue* value) = 0;
-  virtual bool remove(uint32_t keySize, uint8_t* key) = 0;
-
-  virtual std::list<Metadata>::iterator& metadata() = 0;
-  virtual void freeMemory() = 0;
-  virtual void migrate() = 0;
-};
-
-};  // end namespace cache
-};  // end namespace arangodb
-
-#endif
+CachedValue* Cache::Finding::copy() {
+  return ((_value == nullptr) ? nullptr : _value->copy());
+}

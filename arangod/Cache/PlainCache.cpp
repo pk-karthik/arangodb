@@ -55,33 +55,14 @@ PlainCache::~PlainCache() {
   // TODO: implement this
 }
 
-PlainCache::Finding::Finding(CachedValue* v) : _value(v) {
-  if (_value != nullptr) {
-    _value->lease();
-  }
-}
-
-PlainCache::Finding::~Finding() {
-  if (_value != nullptr) {
-    _value->release();
-  }
-}
-
-bool PlainCache::Finding::found() { return (_value != nullptr); }
-
-CachedValue* PlainCache::Finding::value() { return _value; }
-
-CachedValue* PlainCache::Finding::copy() {
-  return ((_value == nullptr) ? nullptr : _value->copy());
-}
-
-PlainCache::Finding PlainCache::lookup(uint32_t keySize, uint8_t* key) {
+Cache::Finding PlainCache::lookup(uint32_t keySize, uint8_t* key) {
   // TODO: implement this;
-  return PlainCache::Finding(nullptr);
+  return Cache::Finding(nullptr);
 }
 
-void PlainCache::insert(CachedValue* value) {
+bool PlainCache::insert(CachedValue* value) {
   // TODO: implement this
+  return false;
 }
 
 bool PlainCache::remove(uint32_t keySize, uint8_t* key) {

@@ -56,34 +56,14 @@ TransactionalCache::~TransactionalCache() {
   // TODO: implement this
 }
 
-TransactionalCache::Finding::Finding(CachedValue* v) : _value(v) {
-  if (_value != nullptr) {
-    _value->lease();
-  }
-}
-
-TransactionalCache::Finding::~Finding() {
-  if (_value != nullptr) {
-    _value->release();
-  }
-}
-
-bool TransactionalCache::Finding::found() { return (_value != nullptr); }
-
-CachedValue* TransactionalCache::Finding::value() { return _value; }
-
-CachedValue* TransactionalCache::Finding::copy() {
-  return ((_value == nullptr) ? nullptr : _value->copy());
-}
-
-TransactionalCache::Finding TransactionalCache::lookup(uint32_t keySize,
-                                                       uint8_t* key) {
+Cache::Finding TransactionalCache::lookup(uint32_t keySize, uint8_t* key) {
   // TODO: implement this;
-  return TransactionalCache::Finding(nullptr);
+  return Cache::Finding(nullptr);
 }
 
-void TransactionalCache::insert(CachedValue* value) {
+bool TransactionalCache::insert(CachedValue* value) {
   // TODO: implement this
+  return false;
 }
 
 bool TransactionalCache::remove(uint32_t keySize, uint8_t* key) {
