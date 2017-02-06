@@ -62,6 +62,8 @@ void Metadata::unlock() { _state &= ~Metadata::FLAG_LOCK; }
 
 bool Metadata::isLocked() { return ((_state.load() & FLAG_LOCK) > 0); }
 
+Cache* Metadata::cache() { return _cache; }
+
 uint32_t Metadata::logSize() { return _logSize; }
 
 uint32_t Metadata::auxiliaryLogSize() { return _auxiliaryLogSize; }

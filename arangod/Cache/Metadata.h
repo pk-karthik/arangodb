@@ -42,6 +42,8 @@ class Metadata {
   void unlock();
   bool isLocked();
 
+  Cache* cache();
+
   uint32_t logSize();
   uint32_t auxiliaryLogSize();
   uint8_t* table();
@@ -68,6 +70,7 @@ class Metadata {
   // state flags
   static uint32_t FLAG_LOCK;
   static uint32_t FLAG_MIGRATING;
+  static uint32_t FLAG_FREEING;
 
   // pointer to underlying cache
   Cache* _cache;

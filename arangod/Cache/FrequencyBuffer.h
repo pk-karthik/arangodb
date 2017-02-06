@@ -29,8 +29,8 @@
 #include <stdint.h>
 #include <algorithm>
 #include <atomic>
-#include <pair>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace arangodb {
@@ -46,7 +46,8 @@ class FrequencyBuffer {
 
  public:
   FrequencyBuffer(uint64_t capacity) : _current(0) {
-    for (size_t i = 0; (1 << i) < capacity; i++) {
+    size_t i = 0;
+    for (; (1ULL << i) < _capacity; i++) {
     }
     _capacity = (1 << i);
     _mask = _capacity - 1;
@@ -55,7 +56,7 @@ class FrequencyBuffer {
 
   void insertRecord(T const& record) {
     ++_current;
-    _buffer[_current & mask] = record;
+    _buffer[_current & _mask] = record;
   }
 
   std::vector<std::pair<T, uint64_t>>* getFrequencies() {

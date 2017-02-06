@@ -51,9 +51,9 @@ struct CachedValue {
   void release();
 
   // utility methods to make creation easier easier
-  uint8_t* createCopy();
-  static uint8_t* construct(uint32_t kSize, uint8_t* k, uint64_t vSize,
-                            uint8_t* v);
+  CachedValue* copy();
+  static CachedValue* construct(uint32_t kSize, uint8_t* k, uint64_t vSize,
+                                uint8_t* v);
 };
 
 static_assert(sizeof(CachedValue) == 16);
