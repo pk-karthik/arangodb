@@ -171,6 +171,8 @@ SET(ARANGOD_SOURCES
   Aql/tokens.cpp
   Cache/CachedValue.cpp
   Cache/Metadata.cpp
+  Cache/PlainBucket.cpp
+  Cache/PlainCache.cpp
   Cache/TransactionalBucket.cpp
   Cache/TransactionalCache.cpp
   Cluster/AgencyCallback.cpp

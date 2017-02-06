@@ -63,7 +63,7 @@ struct alignas(64) PlainBucket {
   // primary functions
   CachedValue* find(uint32_t hash, uint32_t keySize, uint8_t* key);
   void insert(uint32_t hash, CachedValue* value);
-  CachedValue* remove(uint32_t hash, uint32_t keySize, uint8_T* key);
+  CachedValue* remove(uint32_t hash, uint32_t keySize, uint8_t* key);
 
   // auxiliary functions
   CachedValue* evictionCandidate();
