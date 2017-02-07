@@ -106,6 +106,31 @@ class StorageEngine : public application_features::ApplicationFeature {
   // database, collection and index management
   // -----------------------------------------
 
+
+  // TODO add pre / post conditions
+  using Database = TRI_vocbase_t;
+  using CollectionView = LogicalCollection;
+  // if not stated other wise functions may throw and the caller has to take care of error handling
+  // the return values will be the usual  TRI_ERROR_* codes 
+  virtual Database* openDatabaseNew(arangodb::velocypack::Slice const& args, bool isUpgrade, int& status) = 0;
+  virtual Database* openDatabaseNew(arangodb::velocypack::Slice const& args, bool isUpgrade){
+    int status;
+    Database* rv = openDatabaseNew(args, isUpgrade, status);
+    TRI_ASSERT(status == TRI_ERROR_NO_ERROR);
+    TRI_ASSERT(rv == nullptr);
+    return rv;
+  }
+
+  virtual Database* createDatabaseNew(arangodb::velocypack::Slice const& args) = 0; // args contains tick_id
+  virtual int dropDatabaseNew(Database*) = 0;
+
+  //return empty string when not found
+  virtual std::string getName(Database*) const = 0;
+  virtual std::string getPath(Database*) const = 0;
+  virtual std::string getName(CollectionView*) const = 0;
+  virtual std::string getPath(CollectionView*) const = 0;
+
+
   // asks the storage engine to create a database as specified in the VPack
   // Slice object and persist the creation info. It is guaranteed by the server that
   // no other active database with the same name and id exists when this function

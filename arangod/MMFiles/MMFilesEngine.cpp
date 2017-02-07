@@ -479,6 +479,18 @@ int MMFilesEngine::getCollectionsAndIndexes(TRI_vocbase_t* vocbase,
   return TRI_ERROR_NO_ERROR;
 }
 
+TRI_vocbase_t* MMFilesEngine::openDatabaseNew(arangodb::velocypack::Slice const& args, bool isUpgrade, int& status) {
+  VPackSlice idSlice = args.get("id");
+  TRI_voc_tick_t id = static_cast<TRI_voc_tick_t>(basics::StringUtils::uint64(idSlice.copyString()));
+  std::string const name = args.get("name").copyString();
+
+  bool const wasCleanShutdown = MMFilesLogfileManager::instance()->hasFoundLastTick();
+  status = TRI_ERROR_NO_ERROR;
+
+  //try catch?!
+  return openExistingDatabase(id, name, wasCleanShutdown, isUpgrade);
+}
+
 TRI_vocbase_t* MMFilesEngine::openDatabase(VPackSlice const& parameters, bool isUpgrade) {
   VPackSlice idSlice = parameters.get("id");
   TRI_voc_tick_t id = static_cast<TRI_voc_tick_t>(basics::StringUtils::uint64(idSlice.copyString()));

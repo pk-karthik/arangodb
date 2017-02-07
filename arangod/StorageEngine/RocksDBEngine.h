@@ -66,6 +66,41 @@ class RocksDBEngine final : public StorageEngine {
   // inventory functionality
   // -----------------------
 
+  virtual Database* openDatabaseNew(arangodb::velocypack::Slice const& args, bool isUpgrade, int& status){
+    throw std::logic_error("not implemented");
+    return nullptr;
+  }
+
+  virtual Database* createDatabaseNew(arangodb::velocypack::Slice const& args) {
+    throw std::logic_error("not implemented");
+    return nullptr;
+  }
+
+  virtual int dropDatabaseNew(Database*){
+    throw std::logic_error("not implemented");
+    return TRI_ERROR_NO_ERROR;
+  }
+
+  //return empty string when not found
+  virtual std::string getName(Database*) const {
+    throw std::logic_error("not implemented");
+    return TRI_ERROR_NO_ERROR;
+  };
+  virtual std::string getPath(Database*) const {
+    throw std::logic_error("not implemented");
+    return TRI_ERROR_NO_ERROR;
+  };
+  virtual std::string getName(CollectionView*) const {
+    throw std::logic_error("not implemented");
+    return TRI_ERROR_NO_ERROR;
+  };
+  virtual std::string getPath(CollectionView*) const {
+    throw std::logic_error("not implemented");
+    return TRI_ERROR_NO_ERROR;
+  };
+
+
+
   // fill the Builder object with an array of databases that were detected
   // by the storage engine. this method must sort out databases that were not
   // fully created (see "createDatabase" below). called at server start only

@@ -41,10 +41,10 @@
 #include "RestServer/DatabasePathFeature.h"
 #include "RestServer/QueryRegistryFeature.h"
 #include "StorageEngine/EngineSelectorFeature.h"
-#include "MMFiles/MMFilesLogfileManager.h"
-#include "MMFiles/MMFilesPersistentIndex.h"
-#include "MMFiles/MMFilesWalMarker.h"
-#include "MMFiles/MMFilesWalSlots.h"
+#include "MMFiles/MMFilesLogfileManager.h"   // instance::isInRecovery / waitForCollector
+#include "MMFiles/MMFilesPersistentIndex.h"  // RocksDBFeature used in MMFiles
+//#include "MMFiles/MMFilesWalMarker.h"      // MMFiles write ahead log marker
+//#include "MMFiles/MMFilesWalSlots.h"
 #include "StorageEngine/StorageEngine.h"
 #include "Utils/CursorRepository.h"
 #include "Utils/Events.h"
@@ -1188,25 +1188,23 @@ int DatabaseFeature::iterateDatabases(VPackSlice const& databases) {
       // open the database and scan collections in it
 
       // try to open this database
-      TRI_vocbase_t* vocbase = engine->openDatabase(it, _upgrade);
-      // we found a valid database
-      TRI_ASSERT(vocbase != nullptr);
+      TRI_vocbase_t* database = engine->openDatabaseNew(it, _upgrade);
 
       try {
-        vocbase->addReplicationApplier(TRI_CreateReplicationApplier(vocbase));
+        database->addReplicationApplier(TRI_CreateReplicationApplier(database));
       } catch (std::exception const& ex) {
         LOG(FATAL) << "initializing replication applier for database '"
-                   << vocbase->name() << "' failed: " << ex.what();
+                   << database->name() << "' failed: " << ex.what();
         FATAL_ERROR_EXIT();
       }
 
       if (databaseName == TRI_VOC_SYSTEM_DATABASE) {
         // found the system database
         TRI_ASSERT(_vocbase == nullptr);
-        _vocbase = vocbase;
+        _vocbase = database;
       }
 
-      newLists->_databases.insert(std::make_pair(vocbase->name(), vocbase));
+      newLists->_databases.insert(std::make_pair(database->name(), database));
     }
   } catch (std::exception const& ex) {
     delete newLists;

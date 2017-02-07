@@ -77,6 +77,35 @@ class MMFilesEngine final : public StorageEngine {
   // inventory functionality
   // -----------------------
 
+  Database* openDatabaseNew(arangodb::velocypack::Slice const& args, bool isUpgrade, int& status) override;
+
+  Database* createDatabaseNew(arangodb::velocypack::Slice const& args) override {
+    throw std::logic_error("not implemented");
+    return TRI_ERROR_NO_ERROR;
+  }
+  int dropDatabaseNew(Database*) override {
+    throw std::logic_error("not implemented");
+    return TRI_ERROR_NO_ERROR;
+  }
+
+  std::string getName(Database* db) const override {
+    return db->name();
+  }
+
+  std::string getPath(Database* db) const override {
+    return databaseDirectory(db->id());
+  }
+
+  std::string getName(CollectionView*) const override {
+    throw std::logic_error("not implemented");
+    return "not implemented";
+  }
+
+  std::string getPath(CollectionView* coll) const override {
+    throw std::logic_error("not implemented");
+    return collectionDirectory(0, 0);
+  }
+
   // fill the Builder object with an array of databases that were detected
   // by the storage engine. this method must sort out databases that were not
   // fully created (see "createDatabase" below). called at server start only
