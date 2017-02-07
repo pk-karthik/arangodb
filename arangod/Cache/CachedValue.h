@@ -42,18 +42,18 @@ struct CachedValue {
   uint64_t valueSize;
 
   // simple accessor methods
-  uint8_t* key();
-  uint8_t* value();
-  uint64_t size();
+  uint8_t const* key() const;
+  uint8_t const* value() const;
+  uint64_t size() const;
 
   // aliases to handle refCount
   void lease();
   void release();
 
   // utility methods to make creation easier easier
-  CachedValue* copy();
-  static CachedValue* construct(uint32_t kSize, uint8_t* k, uint64_t vSize,
-                                uint8_t* v);
+  CachedValue* copy() const;
+  static CachedValue* construct(uint32_t kSize, uint8_t const* k,
+                                uint64_t vSize, uint8_t const* v);
 };
 
 static_assert(sizeof(CachedValue) == 16);

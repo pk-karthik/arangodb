@@ -46,9 +46,9 @@ class Cache {
     Finding(CachedValue* v);
     ~Finding();
 
-    bool found();
-    CachedValue* value();
-    CachedValue* copy();
+    bool found() const;
+    CachedValue const* value() const;
+    CachedValue* copy() const;
   };
 
   virtual Finding lookup(uint32_t keySize, uint8_t* key) = 0;

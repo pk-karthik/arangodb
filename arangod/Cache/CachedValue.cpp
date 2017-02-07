@@ -28,17 +28,17 @@
 
 using namespace arangodb::cache;
 
-uint8_t* CachedValue::key() {
-  uint8_t* buf = reinterpret_cast<uint8_t*>(this);
+uint8_t const* CachedValue::key() const {
+  uint8_t const* buf = reinterpret_cast<uint8_t const*>(this);
   return (buf + sizeof(CachedValue));
 }
 
-uint8_t* CachedValue::value() {
-  uint8_t* buf = reinterpret_cast<uint8_t*>(this);
+uint8_t const* CachedValue::value() const {
+  uint8_t const* buf = reinterpret_cast<uint8_t const*>(this);
   return (buf + sizeof(CachedValue) + keySize);
 }
 
-uint64_t CachedValue::size() {
+uint64_t CachedValue::size() const {
   uint64_t size = sizeof(CachedValue);
   size += keySize;
   size += valueSize;
@@ -49,12 +49,12 @@ void CachedValue::lease() { refCount++; }
 
 void CachedValue::release() { refCount--; }
 
-CachedValue* CachedValue::copy() {
+CachedValue* CachedValue::copy() const {
   return CachedValue::construct(keySize, key(), valueSize, value());
 }
 
-CachedValue* CachedValue::construct(uint32_t kSize, uint8_t* k, uint64_t vSize,
-                                    uint8_t* v) {
+CachedValue* CachedValue::construct(uint32_t kSize, uint8_t const* k,
+                                    uint64_t vSize, uint8_t const* v) {
   uint8_t* buf = new uint8_t[sizeof(CachedValue) + kSize + vSize];
   CachedValue* cv = reinterpret_cast<CachedValue*>(buf);
 

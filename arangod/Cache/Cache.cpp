@@ -43,10 +43,10 @@ Cache::Finding::~Finding() {
   }
 }
 
-bool Cache::Finding::found() { return (_value != nullptr); }
+bool Cache::Finding::found() const { return (_value != nullptr); }
 
-CachedValue* Cache::Finding::value() { return _value; }
+CachedValue const* Cache::Finding::value() const { return _value; }
 
-CachedValue* Cache::Finding::copy() {
+CachedValue* Cache::Finding::copy() const {
   return ((_value == nullptr) ? nullptr : _value->copy());
 }
