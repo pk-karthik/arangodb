@@ -64,7 +64,9 @@ class FrequencyBuffer {
     std::unordered_map<T, uint64_t> frequencies;
     for (size_t i = 0; i < _capacity; i++) {
       T entry = _buffer[i];
-      frequencies[entry]++;
+      if (entry != T()) {
+        frequencies[entry]++;
+      }
     }
 
     // gather and sort frequencies
