@@ -33,8 +33,7 @@ add_executable(${TEST_BASICS_SUITE}
   ../lib/Basics/WorkMonitorDummy.cpp
 )
 
-include_directories(
-  ${TEST_BASICS_SUITE}
+include_directories(${TEST_BASICS_SUITE}
   PUBLIC ${Boost_UNIT_TEST_INCLUDE_DIR}
 )
 
@@ -47,7 +46,31 @@ target_link_libraries(${TEST_BASICS_SUITE}
 )
 
 if (NOT USE_PRECOMPILED_V8)
-  add_dependencies(basics_suite v8_build)
+  add_dependencies(${TEST_BASICS_SUITE} v8_build)
+endif ()
+
+################################################################################
+## cache_suite
+################################################################################
+
+add_executable(${TEST_CACHE_SUITE}
+  Cache/CachedValue.cpp
+  ../lib/Basics/WorkMonitorDummy.cpp
+  ../arangod/Cache/CachedValue.cpp
+)
+
+include_directories(${TEST_CACHE_SUITE}
+  PUBLIC ${Boost_UNIT_TEST_INCLUDE_DIR}
+)
+
+target_link_libraries(${TEST_CACHE_SUITE}
+  ${LIB_ARANGO}
+  ${MSVC_LIBS}
+  ${SYSTEM_LIBRARIES}
+)
+
+if (NOT USE_PRECOMPILED_V8)
+  add_dependencies(${TEST_CACHE_SUITE} v8_build)
 endif ()
 
 ################################################################################
@@ -67,5 +90,5 @@ target_link_libraries(${TEST_GEO_SUITE}
 )
 
 if (NOT USE_PRECOMPILED_V8)
-  add_dependencies(geo_suite v8_build)
+  add_dependencies(${TEST_GEO_SUITE} v8_build)
 endif ()

@@ -52,8 +52,8 @@ struct CachedValue {
 
   // utility methods to make creation easier easier
   CachedValue* copy() const;
-  static CachedValue* construct(uint32_t kSize, uint8_t const* k,
-                                uint64_t vSize, uint8_t const* v);
+  static CachedValue* construct(void const* k, uint32_t kSize, void const* v,
+                                uint64_t vSize);
 };
 
 static_assert(sizeof(CachedValue) == 16);

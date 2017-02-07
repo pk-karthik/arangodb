@@ -50,21 +50,19 @@ void CachedValue::lease() { refCount++; }
 void CachedValue::release() { refCount--; }
 
 CachedValue* CachedValue::copy() const {
-  return CachedValue::construct(keySize, key(), valueSize, value());
+  return CachedValue::construct(key(), keySize, value(), valueSize);
 }
 
-CachedValue* CachedValue::construct(uint32_t kSize, uint8_t const* k,
-                                    uint64_t vSize, uint8_t const* v) {
+CachedValue* CachedValue::construct(void const* k, uint32_t kSize,
+                                    void const* v, uint64_t vSize) {
   uint8_t* buf = new uint8_t[sizeof(CachedValue) + kSize + vSize];
   CachedValue* cv = reinterpret_cast<CachedValue*>(buf);
 
   cv->refCount = 0;
   cv->keySize = kSize;
   cv->valueSize = vSize;
-  cv += sizeof(CachedValue);
-  std::memcpy(cv, k, kSize);
-  cv += kSize;
-  std::memcpy(cv, v, vSize);
+  std::memcpy(const_cast<uint8_t*>(cv->key()), k, kSize);
+  std::memcpy(const_cast<uint8_t*>(cv->value()), v, vSize);
 
   return cv;
 }
