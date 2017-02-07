@@ -47,28 +47,28 @@ void TransactionalBucket::unlock() {
   // TODO: implement this
 }
 
-bool TransactionalBucket::isLocked() {
+bool TransactionalBucket::isLocked() const {
   // TODO: implement this
   return true;
 }
 
-bool TransactionalBucket::isMigrated() {
+bool TransactionalBucket::isMigrated() const {
   // TODO: implement this
   return false;
 }
 
-bool TransactionalBucket::isFullyBlacklisted() {
+bool TransactionalBucket::isFullyBlacklisted() const {
   // TODO: implement this
   return true;
 }
 
-bool TransactionalBucket::isFull() {
+bool TransactionalBucket::isFull() const {
   // TODO: implement this
   return true;
 }
 
 CachedValue* TransactionalBucket::find(uint32_t hash, uint32_t keySize,
-                                       uint8_t* key) {
+                                       uint8_t* key) const {
   // TODO: implement this
   return nullptr;
 }
@@ -91,12 +91,12 @@ void TransactionalBucket::updateBlacklistTerm(uint64_t term) {
   // TODO: implement this
 }
 
-bool TransactionalBucket::isBlacklisted(uint32_t hash) {
+bool TransactionalBucket::isBlacklisted(uint32_t hash) const {
   // TODO: implement this
   return true;
 }
 
-CachedValue* TransactionalBucket::evictionCandidate() {
+CachedValue* TransactionalBucket::evictionCandidate() const {
   // TODO: implement this
   return nullptr;
 }

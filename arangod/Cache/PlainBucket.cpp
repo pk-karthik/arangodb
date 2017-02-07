@@ -45,22 +45,23 @@ void PlainBucket::unlock() {
   // TODO: implement this
 }
 
-bool PlainBucket::isLocked() {
+bool PlainBucket::isLocked() const {
   // TODO: implement this
   return true;
 }
 
-bool PlainBucket::isMigrated() {
+bool PlainBucket::isMigrated() const {
   // TODO: implement this
   return false;
 }
 
-bool PlainBucket::isFull() {
+bool PlainBucket::isFull() const {
   // TODO: implement this
   return true;
 }
 
-CachedValue* PlainBucket::find(uint32_t hash, uint32_t keySize, uint8_t* key) {
+CachedValue* PlainBucket::find(uint32_t hash, uint32_t keySize,
+                               uint8_t* key) const {
   // TODO: implement this
   return nullptr;
 }
@@ -75,7 +76,7 @@ CachedValue* PlainBucket::remove(uint32_t hash, uint32_t keySize,
   return nullptr;
 }
 
-CachedValue* PlainBucket::evictionCandidate() {
+CachedValue* PlainBucket::evictionCandidate() const {
   // TODO: implement this
   return nullptr;
 }

@@ -62,21 +62,21 @@ struct alignas(64) TransactionalBucket {
   void unlock();
 
   // state checkers
-  bool isLocked();
-  bool isMigrated();
-  bool isFullyBlacklisted();
-  bool isFull();
+  bool isLocked() const;
+  bool isMigrated() const;
+  bool isFullyBlacklisted() const;
+  bool isFull() const;
 
   // primary functions
-  CachedValue* find(uint32_t hash, uint32_t keySize, uint8_t* key);
+  CachedValue* find(uint32_t hash, uint32_t keySize, uint8_t* key) const;
   void insert(uint32_t hash, CachedValue* value);
   CachedValue* remove(uint32_t hash, uint32_t keySize, uint8_t* key);
   void blacklist(uint32_t hash);
 
   // auxiliary functions
   void updateBlacklistTerm(uint64_t term);
-  bool isBlacklisted(uint32_t hash);
-  CachedValue* evictionCandidate();
+  bool isBlacklisted(uint32_t hash) const;
+  CachedValue* evictionCandidate() const;
   void evict(CachedValue* value);
   void toggleMigrated();
 };

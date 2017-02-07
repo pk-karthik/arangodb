@@ -56,17 +56,17 @@ struct alignas(64) PlainBucket {
   void unlock();
 
   // state checkers
-  bool isLocked();
-  bool isMigrated();
-  bool isFull();
+  bool isLocked() const;
+  bool isMigrated() const;
+  bool isFull() const;
 
   // primary functions
-  CachedValue* find(uint32_t hash, uint32_t keySize, uint8_t* key);
+  CachedValue* find(uint32_t hash, uint32_t keySize, uint8_t* key) const;
   void insert(uint32_t hash, CachedValue* value);
   CachedValue* remove(uint32_t hash, uint32_t keySize, uint8_t* key);
 
   // auxiliary functions
-  CachedValue* evictionCandidate();
+  CachedValue* evictionCandidate() const;
   void evict(CachedValue* value);
   void toggleMigrated();
 };

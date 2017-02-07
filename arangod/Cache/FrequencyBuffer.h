@@ -59,7 +59,7 @@ class FrequencyBuffer {
     _buffer[_current & _mask] = record;
   }
 
-  std::vector<std::pair<T, uint64_t>>* getFrequencies() {
+  std::vector<std::pair<T, uint64_t>>* getFrequencies() const {
     // calculate frequencies
     std::unordered_map<T, uint64_t> frequencies;
     for (size_t i = 0; i < _capacity; i++) {

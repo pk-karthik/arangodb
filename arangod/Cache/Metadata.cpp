@@ -60,23 +60,23 @@ void Metadata::lock() {
 
 void Metadata::unlock() { _state &= ~Metadata::FLAG_LOCK; }
 
-bool Metadata::isLocked() { return ((_state.load() & FLAG_LOCK) > 0); }
+bool Metadata::isLocked() const { return ((_state.load() & FLAG_LOCK) > 0); }
 
-Cache* Metadata::cache() { return _cache; }
+Cache* Metadata::cache() const { return _cache; }
 
-uint32_t Metadata::logSize() { return _logSize; }
+uint32_t Metadata::logSize() const { return _logSize; }
 
-uint32_t Metadata::auxiliaryLogSize() { return _auxiliaryLogSize; }
+uint32_t Metadata::auxiliaryLogSize() const { return _auxiliaryLogSize; }
 
-uint8_t* Metadata::table() { return _table; }
+uint8_t* Metadata::table() const { return _table; }
 
-uint8_t* Metadata::auxiliaryTable() { return _auxiliaryTable; }
+uint8_t* Metadata::auxiliaryTable() const { return _auxiliaryTable; }
 
-uint64_t Metadata::usage() { return _usage; }
+uint64_t Metadata::usage() const { return _usage; }
 
-uint64_t Metadata::softLimit() { return _softLimit; }
+uint64_t Metadata::softLimit() const { return _softLimit; }
 
-uint64_t Metadata::hardLimit() { return _hardLimit; }
+uint64_t Metadata::hardLimit() const { return _hardLimit; }
 
 bool Metadata::adjustUsageIfAllowed(int64_t usageChange) {
   if (usageChange < 0) {
@@ -105,7 +105,7 @@ bool Metadata::adjustLimits(uint64_t softLimit, uint64_t hardLimit) {
   return true;
 }
 
-bool Metadata::isMigrating() {
+bool Metadata::isMigrating() const {
   return ((_state & Metadata::FLAG_MIGRATING) > 0);
 }
 

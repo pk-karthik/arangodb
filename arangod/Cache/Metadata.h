@@ -42,22 +42,22 @@ class Metadata {
   // record must be locked for both reading and writing!
   void lock();
   void unlock();
-  bool isLocked();
+  bool isLocked() const;
 
-  Cache* cache();
+  Cache* cache() const;
 
-  uint32_t logSize();
-  uint32_t auxiliaryLogSize();
-  uint8_t* table();
-  uint8_t* auxiliaryTable();
-  uint64_t usage();
-  uint64_t softLimit();
-  uint64_t hardLimit();
+  uint32_t logSize() const;
+  uint32_t auxiliaryLogSize() const;
+  uint8_t* table() const;
+  uint8_t* auxiliaryTable() const;
+  uint64_t usage() const;
+  uint64_t softLimit() const;
+  uint64_t hardLimit() const;
 
   bool adjustUsageIfAllowed(int64_t usageChange);
   bool adjustLimits(uint64_t softLimit, uint64_t hardLimit);
 
-  bool isMigrating();
+  bool isMigrating() const;
   void toggleMigrating();
   void grantAuxiliaryTable(uint8_t* table, uint32_t logSize);
   void swapTables();
