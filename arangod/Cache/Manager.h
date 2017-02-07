@@ -81,6 +81,10 @@ class Manager {
   void reportAccess(Cache const* cache);
 
  private:
+  // methods to lock global state
+  void lock();
+  void unlock();
+
   // periodically run to rebalance allocations globally
   void rebalance();
 

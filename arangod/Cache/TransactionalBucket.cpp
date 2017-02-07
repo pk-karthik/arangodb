@@ -37,9 +37,8 @@ uint32_t TransactionalBucket::FLAG_BLACKLISTED = 0x04;
 size_t TransactionalBucket::SLOTS_DATA = 3;
 size_t TransactionalBucket::SLOTS_BLACKLIST = 4;
 
-bool TransactionalBucket::lock(int64_t maxWait) {
+bool TransactionalBucket::lock(int64_t maxTries) {
   // TODO: implement this
-  // TODO: check on Windows nanosleep behavior, possibly change to maxTries
   return false;
 }
 

@@ -35,9 +35,8 @@ uint32_t PlainBucket::FLAG_MIGRATED = 0x02;
 
 size_t PlainBucket::SLOTS_DATA = 5;
 
-bool PlainBucket::lock(int64_t maxWait) {
+bool PlainBucket::lock(int64_t maxTries) {
   // TODO: implement this
-  // TODO: check on Windows nanosleep behavior, possibly change to maxTries
   return false;
 }
 

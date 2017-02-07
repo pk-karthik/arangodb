@@ -52,7 +52,7 @@ struct alignas(64) PlainBucket {
 #endif
 
   // must lock before using any other operations
-  bool lock(int64_t maxWait);
+  bool lock(int64_t maxTries);
   void unlock();
 
   // state checkers

@@ -91,6 +91,15 @@ void TransactionalCache::requestResize(uint64_t requestedLimit) {
   // TODO: implement this
 }
 
+bool TransactionalCache::lock(int64_t maxTries) {
+  // TODO: implement this
+  return false;
+}
+
+void TransactionalCache::unlock() {
+  // TODO: implement this
+}
+
 void TransactionalCache::requestMigrate(uint32_t requestedLogSize) {
   // TODO: implement this
 }

@@ -86,6 +86,14 @@ void Manager::reportAccess(Cache const* cache) {
   // TODO: implement this
 }
 
+void Manager::lock() {
+  // TODO: implement this
+}
+
+void Manager::unlock() {
+  // TODO: implement this
+}
+
 void Manager::rebalance() {
   // TODO: implement this
 }

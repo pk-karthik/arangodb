@@ -84,6 +84,15 @@ void PlainCache::requestResize(uint64_t requestedLimit) {
   // TODO: implement this
 }
 
+bool PlainCache::lock(int64_t maxTries) {
+  // TODO: implement this
+  return false;
+}
+
+void PlainCache::unlock() {
+  // TODO: implement this
+}
+
 void PlainCache::requestMigrate(uint32_t requestedLogSize) {
   // TODO: implement this
 }

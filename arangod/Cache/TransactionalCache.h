@@ -95,6 +95,10 @@ class TransactionalCache : public Cache {
   void requestResize(uint64_t requestedLimit);
 
  private:
+  // methods to lock global state
+  bool lock(int64_t maxTries);
+  void unlock();
+
   void requestMigrate(uint32_t requestedLogSize);
 };
 

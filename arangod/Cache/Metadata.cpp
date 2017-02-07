@@ -54,7 +54,7 @@ void Metadata::lock() {
     if (success) {
       break;
     }
-    // TODO: exponential back-off for failure
+    // TODO: exponential back-off for failure?
   }
 }
 
