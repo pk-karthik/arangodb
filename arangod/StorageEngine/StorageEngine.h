@@ -120,7 +120,7 @@ class StorageEngine : public application_features::ApplicationFeature {
     int status;
     Database* rv = openDatabase(args, isUpgrade, status);
     TRI_ASSERT(status == TRI_ERROR_NO_ERROR);
-    TRI_ASSERT(rv == nullptr);
+    TRI_ASSERT(rv != nullptr);
     return rv;
   }
 
