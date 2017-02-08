@@ -56,6 +56,7 @@ endif ()
 add_executable(${TEST_CACHE_SUITE}
   Cache/Runner.cpp
   Cache/CachedValue.cpp
+  Cache/FrequencyBuffer.cpp
   Cache/Metadata.cpp
   ../lib/Basics/WorkMonitorDummy.cpp
   ../arangod/Cache/CachedValue.cpp

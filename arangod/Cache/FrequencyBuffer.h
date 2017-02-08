@@ -29,6 +29,7 @@
 #include <stdint.h>
 #include <algorithm>
 #include <atomic>
+#include <memory>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -42,16 +43,20 @@ class FrequencyBuffer {
   std::atomic<uint64_t> _current;
   uint64_t _capacity;
   uint64_t _mask;
-  std::vector<T> _buffer;
+  std::unique_ptr<T[]> _buffer;
 
  public:
   FrequencyBuffer(uint64_t capacity) : _current(0) {
     size_t i = 0;
-    for (; (1ULL << i) < _capacity; i++) {
+    for (; (1ULL << i) < capacity; i++) {
     }
     _capacity = (1 << i);
     _mask = _capacity - 1;
-    _buffer.resize(_capacity);
+    _buffer.reset(new T[_capacity]());
+  }
+
+  uint64_t memoryUsage() {
+    return ((_capacity * sizeof(T)) + sizeof(FrequencyBuffer<T>));
   }
 
   void insertRecord(T const& record) {
@@ -59,6 +64,7 @@ class FrequencyBuffer {
     _buffer[_current & _mask] = record;
   }
 
+  // return frequencies in ASCENDING order
   std::vector<std::pair<T, uint64_t>>* getFrequencies() const {
     // calculate frequencies
     std::unordered_map<T, uint64_t> frequencies;
@@ -73,9 +79,9 @@ class FrequencyBuffer {
     auto data = new std::vector<std::pair<T, uint64_t>>();
     data->reserve(frequencies.size());
     for (auto f : frequencies) {
-      data->emplace_back(std::pair<T, uint64_t>(f->first, f->second));
+      data->emplace_back(std::pair<T, uint64_t>(f.first, f.second));
     }
-    std::sort(data.begin(), data.end(),
+    std::sort(data->begin(), data->end(),
               [](std::pair<T, uint64_t>& left, std::pair<T, uint64_t>& right) {
                 return left.second < right.second;
               });
