@@ -54,9 +54,12 @@ endif ()
 ################################################################################
 
 add_executable(${TEST_CACHE_SUITE}
+  Cache/Runner.cpp
   Cache/CachedValue.cpp
+  Cache/Metadata.cpp
   ../lib/Basics/WorkMonitorDummy.cpp
   ../arangod/Cache/CachedValue.cpp
+  ../arangod/Cache/Metadata.cpp
 )
 
 include_directories(${TEST_CACHE_SUITE}

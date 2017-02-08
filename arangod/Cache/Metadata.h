@@ -61,6 +61,8 @@ class Metadata {
   void toggleMigrating();
   void grantAuxiliaryTable(uint8_t* table, uint32_t logSize);
   void swapTables();
+  bool isResizing() const;
+  void toggleResizing();
 
   uint8_t* releaseTable();
   uint8_t* releaseAuxiliaryTable();

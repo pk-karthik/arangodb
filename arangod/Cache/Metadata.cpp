@@ -31,6 +31,7 @@ using namespace arangodb::cache;
 
 uint32_t Metadata::FLAG_LOCK = 0x01;
 uint32_t Metadata::FLAG_MIGRATING = 0x02;
+uint32_t Metadata::FLAG_RESIZING = 0x04;
 
 Metadata::Metadata(Cache* cache, uint64_t limit, uint8_t* table,
                    uint32_t logSize)
@@ -58,35 +59,64 @@ void Metadata::lock() {
   }
 }
 
-void Metadata::unlock() { _state &= ~Metadata::FLAG_LOCK; }
+void Metadata::unlock() {
+  TRI_ASSERT(isLocked());
+  _state &= ~Metadata::FLAG_LOCK;
+}
 
 bool Metadata::isLocked() const { return ((_state.load() & FLAG_LOCK) > 0); }
 
-Cache* Metadata::cache() const { return _cache; }
+Cache* Metadata::cache() const {
+  TRI_ASSERT(isLocked());
+  return _cache;
+}
 
-uint32_t Metadata::logSize() const { return _logSize; }
+uint32_t Metadata::logSize() const {
+  TRI_ASSERT(isLocked());
+  return _logSize;
+}
 
-uint32_t Metadata::auxiliaryLogSize() const { return _auxiliaryLogSize; }
+uint32_t Metadata::auxiliaryLogSize() const {
+  TRI_ASSERT(isLocked());
+  return _auxiliaryLogSize;
+}
 
-uint8_t* Metadata::table() const { return _table; }
+uint8_t* Metadata::table() const {
+  TRI_ASSERT(isLocked());
+  return _table;
+}
 
-uint8_t* Metadata::auxiliaryTable() const { return _auxiliaryTable; }
+uint8_t* Metadata::auxiliaryTable() const {
+  TRI_ASSERT(isLocked());
+  return _auxiliaryTable;
+}
 
-uint64_t Metadata::usage() const { return _usage; }
+uint64_t Metadata::usage() const {
+  TRI_ASSERT(isLocked());
+  return _usage;
+}
 
-uint64_t Metadata::softLimit() const { return _softLimit; }
+uint64_t Metadata::softLimit() const {
+  TRI_ASSERT(isLocked());
+  return _softLimit;
+}
 
-uint64_t Metadata::hardLimit() const { return _hardLimit; }
+uint64_t Metadata::hardLimit() const {
+  TRI_ASSERT(isLocked());
+  return _hardLimit;
+}
 
 bool Metadata::adjustUsageIfAllowed(int64_t usageChange) {
+  TRI_ASSERT(isLocked());
+
   if (usageChange < 0) {
     _usage -= static_cast<uint64_t>(-usageChange);
     return true;
   }
 
-  if ((static_cast<uint64_t>(usageChange) + _usage < _softLimit) ||
+  if ((static_cast<uint64_t>(usageChange) + _usage <= _softLimit) ||
       ((_usage > _softLimit) &&
-       (static_cast<uint64_t>(usageChange) + _usage < _hardLimit))) {
+       (static_cast<uint64_t>(usageChange) + _usage <= _hardLimit))) {
     _usage += static_cast<uint64_t>(usageChange);
     return true;
   }
@@ -95,6 +125,8 @@ bool Metadata::adjustUsageIfAllowed(int64_t usageChange) {
 }
 
 bool Metadata::adjustLimits(uint64_t softLimit, uint64_t hardLimit) {
+  TRI_ASSERT(isLocked());
+
   if (hardLimit < _usage) {
     return false;
   }
@@ -106,22 +138,39 @@ bool Metadata::adjustLimits(uint64_t softLimit, uint64_t hardLimit) {
 }
 
 bool Metadata::isMigrating() const {
-  return ((_state & Metadata::FLAG_MIGRATING) > 0);
+  TRI_ASSERT(isLocked());
+  return ((_state.load() & Metadata::FLAG_MIGRATING) > 0);
 }
 
-void Metadata::toggleMigrating() { _state ^= Metadata::FLAG_MIGRATING; }
+void Metadata::toggleMigrating() {
+  TRI_ASSERT(isLocked());
+  _state ^= Metadata::FLAG_MIGRATING;
+}
 
 void Metadata::grantAuxiliaryTable(uint8_t* table, uint32_t logSize) {
+  TRI_ASSERT(isLocked());
   _auxiliaryTable = table;
   _auxiliaryLogSize = logSize;
 }
 
 void Metadata::swapTables() {
+  TRI_ASSERT(isLocked());
   std::swap(_table, _auxiliaryTable);
   std::swap(_logSize, _auxiliaryLogSize);
 }
 
+bool Metadata::isResizing() const {
+  TRI_ASSERT(isLocked());
+  return ((_state.load() & Metadata::FLAG_RESIZING) > 0);
+}
+
+void Metadata::toggleResizing() {
+  TRI_ASSERT(isLocked());
+  _state ^= Metadata::FLAG_RESIZING;
+}
+
 uint8_t* Metadata::releaseTable() {
+  TRI_ASSERT(isLocked());
   uint8_t* table = _table;
   _table = nullptr;
   _logSize = 0;
@@ -129,6 +178,7 @@ uint8_t* Metadata::releaseTable() {
 }
 
 uint8_t* Metadata::releaseAuxiliaryTable() {
+  TRI_ASSERT(isLocked());
   uint8_t* table = _auxiliaryTable;
   _auxiliaryTable = nullptr;
   _auxiliaryLogSize = 0;
