@@ -34,6 +34,10 @@ uint8_t const* CachedValue::key() const {
 }
 
 uint8_t const* CachedValue::value() const {
+  if (valueSize == 0) {
+    return nullptr;
+  }
+
   uint8_t const* buf = reinterpret_cast<uint8_t const*>(this);
   return (buf + sizeof(CachedValue) + keySize);
 }
@@ -49,12 +53,20 @@ void CachedValue::lease() { refCount++; }
 
 void CachedValue::release() { refCount--; }
 
+bool CachedValue::isFreeable() { return (refCount.load() == 0); }
+
 CachedValue* CachedValue::copy() const {
-  return CachedValue::construct(key(), keySize, value(), valueSize);
+  uint8_t* buf = new uint8_t[size()];
+  memcpy(buf, this, size());
+  return reinterpret_cast<CachedValue*>(buf);
 }
 
 CachedValue* CachedValue::construct(void const* k, uint32_t kSize,
                                     void const* v, uint64_t vSize) {
+  if (kSize == 0 || k == nullptr || (vSize > 0 && v == nullptr)) {
+    return nullptr;
+  }
+
   uint8_t* buf = new uint8_t[sizeof(CachedValue) + kSize + vSize];
   CachedValue* cv = reinterpret_cast<CachedValue*>(buf);
 
@@ -62,7 +74,9 @@ CachedValue* CachedValue::construct(void const* k, uint32_t kSize,
   cv->keySize = kSize;
   cv->valueSize = vSize;
   std::memcpy(const_cast<uint8_t*>(cv->key()), k, kSize);
-  std::memcpy(const_cast<uint8_t*>(cv->value()), v, vSize);
+  if (vSize > 0) {
+    std::memcpy(const_cast<uint8_t*>(cv->value()), v, vSize);
+  }
 
   return cv;
 }

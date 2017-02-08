@@ -63,15 +63,88 @@ BOOST_FIXTURE_TEST_SUITE(CCacheCachedValueTest, CCacheCachedValueSetup)
 BOOST_AUTO_TEST_CASE(tst_construct_valid) {
   uint64_t k = 1;
   std::string v("test");
+  CachedValue* cv;
 
-  CachedValue* cv =
-      CachedValue::construct(&k, sizeof(uint64_t), v.data(), v.size());
+  // fixed key, variable value
+  cv = CachedValue::construct(&k, sizeof(uint64_t), v.data(), v.size());
+  BOOST_CHECK(nullptr != cv);
   BOOST_CHECK_EQUAL(sizeof(uint64_t), cv->keySize);
   BOOST_CHECK_EQUAL(v.size(), cv->valueSize);
   BOOST_CHECK_EQUAL(sizeof(CachedValue) + sizeof(uint64_t) + v.size(),
                     cv->size());
   BOOST_CHECK_EQUAL(k, *reinterpret_cast<uint64_t const*>(cv->key()));
   BOOST_CHECK_EQUAL(0, memcmp(v.data(), cv->value(), v.size()));
+  delete cv;
+
+  // variable key, fixed value
+  cv = CachedValue::construct(v.data(), v.size(), &k, sizeof(uint64_t));
+  BOOST_CHECK(nullptr != cv);
+  BOOST_CHECK_EQUAL(v.size(), cv->keySize);
+  BOOST_CHECK_EQUAL(sizeof(uint64_t), cv->valueSize);
+  BOOST_CHECK_EQUAL(sizeof(CachedValue) + sizeof(uint64_t) + v.size(),
+                    cv->size());
+  BOOST_CHECK_EQUAL(0, memcmp(v.data(), cv->key(), v.size()));
+  BOOST_CHECK_EQUAL(k, *reinterpret_cast<uint64_t const*>(cv->value()));
+  delete cv;
+
+  // fixed key, zero length value
+  cv = CachedValue::construct(&k, sizeof(uint64_t), nullptr, 0);
+  BOOST_CHECK(nullptr != cv);
+  BOOST_CHECK_EQUAL(sizeof(uint64_t), cv->keySize);
+  BOOST_CHECK_EQUAL(0ULL, cv->valueSize);
+  BOOST_CHECK_EQUAL(sizeof(CachedValue) + sizeof(uint64_t), cv->size());
+  BOOST_CHECK_EQUAL(k, *reinterpret_cast<uint64_t const*>(cv->key()));
+  BOOST_CHECK(nullptr == cv->value());
+  delete cv;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief test construct with invalid data
+////////////////////////////////////////////////////////////////////////////////
+
+BOOST_AUTO_TEST_CASE(tst_construct_invalid) {
+  uint64_t k = 1;
+  std::string v("test");
+  CachedValue* cv;
+
+  // zero size key
+  cv = CachedValue::construct(&k, 0, v.data(), v.size());
+  BOOST_CHECK(nullptr == cv);
+
+  // nullptr key, zero size
+  cv = CachedValue::construct(nullptr, 0, v.data(), v.size());
+  BOOST_CHECK(nullptr == cv);
+
+  // nullptr key, non-zero size
+  cv = CachedValue::construct(nullptr, sizeof(uint64_t), v.data(), v.size());
+  BOOST_CHECK(nullptr == cv);
+
+  // nullptr value, non-zero length
+  cv = CachedValue::construct(&k, sizeof(uint64_t), nullptr, v.size());
+  BOOST_CHECK(nullptr == cv);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief test copy
+////////////////////////////////////////////////////////////////////////////////
+
+BOOST_AUTO_TEST_CASE(tst_copy) {
+  uint64_t k = 1;
+  std::string v("test");
+
+  // fixed key, variable value
+  auto original =
+      CachedValue::construct(&k, sizeof(uint64_t), v.data(), v.size());
+  auto copy = original->copy();
+  BOOST_CHECK(nullptr != copy);
+  BOOST_CHECK_EQUAL(sizeof(uint64_t), copy->keySize);
+  BOOST_CHECK_EQUAL(v.size(), copy->valueSize);
+  BOOST_CHECK_EQUAL(sizeof(CachedValue) + sizeof(uint64_t) + v.size(),
+                    copy->size());
+  BOOST_CHECK_EQUAL(k, *reinterpret_cast<uint64_t const*>(copy->key()));
+  BOOST_CHECK_EQUAL(0, memcmp(v.data(), copy->value(), v.size()));
+  delete original;
+  delete copy;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

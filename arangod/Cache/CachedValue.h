@@ -49,6 +49,7 @@ struct CachedValue {
   // aliases to handle refCount
   void lease();
   void release();
+  bool isFreeable();
 
   // utility methods to make creation easier easier
   CachedValue* copy() const;
