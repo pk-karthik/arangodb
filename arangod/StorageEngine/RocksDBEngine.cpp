@@ -21,6 +21,8 @@
 /// @author Jan Steemann
 ////////////////////////////////////////////////////////////////////////////////
 
+/*
+
 #include "RocksDBEngine.h"
 #include "Basics/FileUtils.h"
 #include "Basics/MutexLocker.h"
@@ -133,7 +135,8 @@ int RocksDBEngine::getCollectionsAndIndexes(TRI_vocbase_t* vocbase,
   return TRI_ERROR_NO_ERROR;
 }
 
-TRI_vocbase_t* RocksDBEngine::openDatabase(VPackSlice const& parameters, bool isUpgrade) {
+TRI_vocbase_t* RocksDBEngine::openDatabase(VPackSlice const& parameters, bool isUpgrade, int& status) {
+  status = TRI_ERROR_BAD_PARAMETER;
   return nullptr;
 }
 
@@ -145,7 +148,8 @@ TRI_vocbase_t* RocksDBEngine::openDatabase(VPackSlice const& parameters, bool is
 // so that subsequent database creation requests will not fail.
 // the WAL entry for the database creation will be written *after* the call
 // to "createDatabase" returns
-TRI_vocbase_t* RocksDBEngine::createDatabase(TRI_voc_tick_t id, arangodb::velocypack::Slice const& data) {
+TRI_vocbase_t* RocksDBEngine::createDatabase(TRI_voc_tick_t id, arangodb::velocypack::Slice const& data, int& status) {
+  status = TRI_ERROR_BAD_PARAMETER;
   return nullptr;
 }
 
@@ -156,18 +160,18 @@ TRI_vocbase_t* RocksDBEngine::createDatabase(TRI_voc_tick_t id, arangodb::velocy
 // but let's an async task perform the actual deletion. 
 // the WAL entry for database deletion will be written *after* the call
 // to "prepareDropDatabase" returns
-int RocksDBEngine::prepareDropDatabase(TRI_vocbase_t* vocbase) {
-  return TRI_ERROR_NO_ERROR;
+void RocksDBEngine::prepareDropDatabase(TRI_vocbase_t* vocbase, bool usemarker, int& status) {
+  status = TRI_ERROR_NO_ERROR;
 }
 
 // perform a physical deletion of the database      
-int RocksDBEngine::dropDatabase(TRI_vocbase_t* vocbase) {
-  return TRI_ERROR_NO_ERROR;
+void RocksDBEngine::dropDatabase(TRI_vocbase_t* vocbase, int& status) {
+  status = TRI_ERROR_NO_ERROR;
 }
 
 /// @brief wait until a database directory disappears
-int RocksDBEngine::waitUntilDeletion(TRI_voc_tick_t id, bool force) {
-  return TRI_ERROR_NO_ERROR;
+void RocksDBEngine::waitUntilDeletion(TRI_voc_tick_t id, bool force, int &status) {
+  status =TRI_ERROR_NO_ERROR;
 }
 
 
@@ -283,7 +287,7 @@ bool RocksDBEngine::cleanupCompactionBlockers(TRI_vocbase_t* vocbase) {
 
   size_t n = (*it).second.size();
 
-  for (size_t i = 0; i < n; /* no hoisting */) {
+  for (size_t i = 0; i < n;) { //no hoisting
     auto& blocker = (*it).second[i];
 
     if (blocker._expires < now) {
@@ -469,3 +473,5 @@ void RocksDBEngine::verifyDirectories() {
     THROW_ARANGO_EXCEPTION(TRI_ERROR_ARANGO_DATADIR_NOT_WRITABLE);
   }
 }
+
+*/

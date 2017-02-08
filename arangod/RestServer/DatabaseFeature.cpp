@@ -385,9 +385,8 @@ void DatabaseFeature::beginShutdown() {
 }
 
 void DatabaseFeature::stop() {
-  auto logfileManager = MMFilesLogfileManager::instance();
-  logfileManager->flush(true, true, false);
-  logfileManager->waitForCollector();
+  StorageEngine* engine = EngineSelectorFeature::ENGINE;
+  engine->stop();
 }
 
 void DatabaseFeature::unprepare() {
@@ -535,6 +534,9 @@ int DatabaseFeature::createDatabase(TRI_voc_tick_t id, std::string const& name,
   std::unique_ptr<TRI_vocbase_t> vocbase;
   VPackBuilder builder;
 
+  // create database in storage engine
+  StorageEngine* engine = EngineSelectorFeature::ENGINE;
+
   // the create lock makes sure no one else is creating a database while we're
   // inside
   // this function
@@ -558,13 +560,10 @@ int DatabaseFeature::createDatabase(TRI_voc_tick_t id, std::string const& name,
     builder.add("name", VPackValue(name));
     builder.close();
 
-    // create database in storage engine
-    StorageEngine* engine = EngineSelectorFeature::ENGINE;
     // createDatabase must return a valid database or throw
     vocbase.reset(engine->createDatabase(id, builder.slice()));
 
 
-/// part of CREATE DATABASE MMFILE?!
     TRI_ASSERT(vocbase != nullptr);
 
     try {
@@ -588,7 +587,7 @@ int DatabaseFeature::createDatabase(TRI_voc_tick_t id, std::string const& name,
     // create app directory for database if it does not exist
     int res = createApplicationDirectory(name, appPath);
 
-    if (!MMFilesLogfileManager::instance()->isInRecovery()) {
+    if (! engine->inRecovery()) {
       // starts compactor etc.
       engine->recoveryDone(vocbase.get());
 
@@ -630,10 +629,8 @@ int DatabaseFeature::createDatabase(TRI_voc_tick_t id, std::string const& name,
   int res = TRI_ERROR_NO_ERROR;
 
   if (writeMarker) {
-    res = writeCreateMarker(id, builder.slice());
+    res = engine->writeCreateMarker(id, builder.slice());
   }
-
-/// create end?!?!?!
 
   result = vocbase.release();
   events::CreateDatabase(name, res);
@@ -1104,6 +1101,7 @@ int DatabaseFeature::createApplicationDirectory(std::string const& name,
   std::string const path = basics::FileUtils::buildFilename(
       basics::FileUtils::buildFilename(basePath, "_db"), name);
   int res = TRI_ERROR_NO_ERROR;
+  StorageEngine* engine = EngineSelectorFeature::ENGINE;
 
   if (!TRI_IsDirectory(path.c_str())) {
     long systemError;
@@ -1111,7 +1109,7 @@ int DatabaseFeature::createApplicationDirectory(std::string const& name,
     res = TRI_CreateRecursiveDirectory(path.c_str(), systemError, errorMessage);
 
     if (res == TRI_ERROR_NO_ERROR) {
-      if (MMFilesLogfileManager::instance()->isInRecovery()) {
+      if (engine->inRecovery()) {
         LOG(TRACE) << "created application directory '" << path
                    << "' for database '" << name << "'";
       } else {
@@ -1293,35 +1291,5 @@ void DatabaseFeature::enableDeadlockDetection() {
 
     vocbase->_deadlockDetector.enabled(true);
   }
-}
-
-/// @brief writes a create-database marker into the log
-int DatabaseFeature::writeCreateMarker(TRI_voc_tick_t id,
-                                       VPackSlice const& slice) {
-  int res = TRI_ERROR_NO_ERROR;
-
-  try {
-    MMFilesDatabaseMarker marker(TRI_DF_MARKER_VPACK_CREATE_DATABASE, id,
-                                 slice);
-    MMFilesWalSlotInfoCopy slotInfo =
-        MMFilesLogfileManager::instance()->allocateAndWrite(marker,
-                                                                    false);
-
-    if (slotInfo.errorCode != TRI_ERROR_NO_ERROR) {
-      // throw an exception which is caught at the end of this function
-      THROW_ARANGO_EXCEPTION(slotInfo.errorCode);
-    }
-  } catch (arangodb::basics::Exception const& ex) {
-    res = ex.code();
-  } catch (...) {
-    res = TRI_ERROR_INTERNAL;
-  }
-
-  if (res != TRI_ERROR_NO_ERROR) {
-    LOG(WARN) << "could not save create database marker in log: "
-              << TRI_errno_string(res);
-  }
-
-  return res;
 }
 

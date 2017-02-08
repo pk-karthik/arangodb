@@ -63,7 +63,9 @@ class StorageEngine : public application_features::ApplicationFeature {
 
   virtual void start() {}
   virtual void stop() {}
+  virtual bool inRecovery() { return false; }
   virtual void recoveryDone(TRI_vocbase_t* vocbase) {}
+  int writeCreateMarker(TRI_voc_tick_t id, VPackSlice const& slice){ return TRI_ERROR_NO_ERROR; };
 
 
   // create storage-engine specific collection

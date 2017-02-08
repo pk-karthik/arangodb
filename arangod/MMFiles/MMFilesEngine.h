@@ -67,6 +67,9 @@ class MMFilesEngine final : public StorageEngine {
   // initialize engine
   void start() override;
   void stop() override;
+      
+  
+  bool inRecovery() override;
 
   // called when recovery is finished
   void recoveryDone(TRI_vocbase_t* vocbase) override;
@@ -161,8 +164,11 @@ class MMFilesEngine final : public StorageEngine {
   
   /// @brief wait until a database directory disappears
   void waitUntilDeletion(TRI_voc_tick_t id, bool force, int& status) override;
+  
+  
+  /// @brief writes a create-database marker into the log
+  int writeCreateMarker(TRI_voc_tick_t id, VPackSlice const& slice);
 
-public:  
   // asks the storage engine to create a collection as specified in the VPack
   // Slice object and persist the creation info. It is guaranteed by the server 
   // that no other active collection with the same name and id exists in the same

@@ -213,6 +213,10 @@ void MMFilesEngine::start() {
 // write requests to the storage engine after this call
 void MMFilesEngine::stop() {
   TRI_ASSERT(EngineSelectorFeature::ENGINE == this);
+  
+  auto logfileManager = MMFilesLogfileManager::instance();
+  logfileManager->flush(true, true, false);
+  logfileManager->waitForCollector();
 }
 
 // create storage-engine specific collection
@@ -2249,3 +2253,36 @@ int MMFilesEngine::writeDropMarker(TRI_voc_tick_t id) {
 
   return res;
 }
+
+bool MMFilesEngine::inRecovery() { return MMFilesLogfileManager::instance()->isInRecovery(); }
+
+/// @brief writes a create-database marker into the log
+int MMFilesEngine::writeCreateMarker(TRI_voc_tick_t id,
+                                       VPackSlice const& slice) {
+  int res = TRI_ERROR_NO_ERROR;
+
+  try {
+    MMFilesDatabaseMarker marker(TRI_DF_MARKER_VPACK_CREATE_DATABASE, id,
+                                 slice);
+    MMFilesWalSlotInfoCopy slotInfo =
+        MMFilesLogfileManager::instance()->allocateAndWrite(marker,
+                                                                    false);
+
+    if (slotInfo.errorCode != TRI_ERROR_NO_ERROR) {
+      // throw an exception which is caught at the end of this function
+      THROW_ARANGO_EXCEPTION(slotInfo.errorCode);
+    }
+  } catch (arangodb::basics::Exception const& ex) {
+    res = ex.code();
+  } catch (...) {
+    res = TRI_ERROR_INTERNAL;
+  }
+
+  if (res != TRI_ERROR_NO_ERROR) {
+    LOG(WARN) << "could not save create database marker in log: "
+              << TRI_errno_string(res);
+  }
+
+  return res;
+}
+

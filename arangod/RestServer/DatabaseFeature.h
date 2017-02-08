@@ -146,8 +146,6 @@ class DatabaseFeature final : public application_features::ApplicationFeature {
   /// @brief activates deadlock detection in all existing databases
   void enableDeadlockDetection();
 
-  /// @brief writes a create-database marker into the log
-  int writeCreateMarker(TRI_voc_tick_t id, VPackSlice const& slice);
   
 
  private:
